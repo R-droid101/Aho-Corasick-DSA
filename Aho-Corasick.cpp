@@ -104,7 +104,7 @@ int main()
     string text;
     vector<string> listOfWords;
 
-    bool result = getFileContent("inputtext.txt", listOfWords);
+    bool result = getFileContent("wordlist.txt", listOfWords);
     int k = 143091;
 
     trie obj;
@@ -195,7 +195,7 @@ int main()
         break;
 
         default:
-            cout << "You typed in an incorrect option. Please try again" << endl;
+            cout << "\nYou typed in an incorrect option. Please try again.\n" << endl;
         }
 
         ch = -1;

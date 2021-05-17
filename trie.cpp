@@ -48,42 +48,42 @@ public:
     }
 
     void failAndDictLinks(trie *root)
-{
-    root->failureLinks = root;
-
-    queue<trie *> q;
-
-    for (auto &it : root->child)
     {
-        q.push(it.second);
-        it.second->failureLinks = root;
-    }
+        root->failureLinks = root;
 
-    while (q.size())
-    {
-        trie *presentState = q.front();
-        q.pop();
+        queue<trie *> q;
 
-        for (auto &it : presentState->child)
+        for (auto &it : root->child)
         {
-            char c = it.first;
-            trie *temp = presentState->failureLinks;
-
-            while (temp->child.count(c) == 0 && temp != root)
-                temp = temp->failureLinks;
-
-            if (temp->child.count(c))
-                it.second->failureLinks = temp->child[c];                
-            else
-                it.second->failureLinks = root;
-
             q.push(it.second);
+            it.second->failureLinks = root;
         }
 
-        if (presentState->failureLinks->endOfWord >= 0)
-            presentState->dictionaryLinks = presentState->failureLinks;
-        else
-            presentState->dictionaryLinks = presentState->failureLinks->dictionaryLinks;
+        while (q.size())
+        {
+            trie *presentState = q.front();
+            q.pop();
+
+            for (auto &it : presentState->child)
+            {
+                char c = it.first;
+                trie *temp = presentState->failureLinks;
+
+                while (temp->child.count(c) == 0 && temp != root)
+                    temp = temp->failureLinks;
+
+                if (temp->child.count(c))
+                    it.second->failureLinks = temp->child[c];
+                else
+                    it.second->failureLinks = root;
+
+                q.push(it.second);
+            }
+
+            if (presentState->failureLinks->endOfWord >= 0)
+                presentState->dictionaryLinks = presentState->failureLinks;
+            else
+                presentState->dictionaryLinks = presentState->failureLinks->dictionaryLinks;
+        }
     }
-}
 };
