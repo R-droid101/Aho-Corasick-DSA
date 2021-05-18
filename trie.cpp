@@ -14,7 +14,7 @@ public: // public data members
     trie *dictionaryLinks;
     int endOfWord;
 
-public: //public member functions
+public:             //public member functions
     trie *newNode() //function to create a node
     {
         trie *temp = new trie;
@@ -50,10 +50,10 @@ public: //public member functions
     }
 
     void failAndDictLinks(trie *root)
-    { // function to create dictionary and failure links within the trie
-      // here we use breadth first search to navigate to each child to create the failure links 
+    {   // function to create dictionary and failure links within the trie
+        // here we use breadth first search to navigate to each child to create the failure links
         root->failureLinks = root;
-      // BFS is implemented using queue and here we are using the cpp header file called queue
+        // BFS is implemented using queue and here we are using the cpp header file called queue
         queue<trie *> q;
 
         //creating failure link for each node

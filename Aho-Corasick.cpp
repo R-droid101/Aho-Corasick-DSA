@@ -25,57 +25,57 @@ void startsWith(trie *root, string &text, vector<int> &indexOfWords)
     trie *parent = root;
     char c;
     for (int i = 0; i < text.length(); i++)
-    { // loop to iterate through the input sequence of characters from the user
-        c = text[i]; // stores the ith character in input string
-        if (parent->child.count(c)) // checks if the child of parent node exists
+    {                                  // loop to iterate through the input sequence of characters from the user
+        c = text[i];                   // stores the ith character in input string
+        if (parent->child.count(c))    // checks if the child of parent node exists
             parent = parent->child[c]; // if child node exists, the child node is made the parent node
-        
-    } // finish processing the input sequence of characters
-    if (parent->endOfWord >= 0) // now it checks if the given sequence of characters is a word itself
+
+    }                                              // finish processing the input sequence of characters
+    if (parent->endOfWord >= 0)                    // now it checks if the given sequence of characters is a word itself
         indexOfWords.push_back(parent->endOfWord); // if yes it pushes into the vector
 
     recStartsWith(indexOfWords, parent); // calls recursive function to find more words that start with the given sequence of characters
 }
 
 void createAutomaton(trie *root, vector<string> &listOfWords)
-{ // this function is used to create the automaton for the Aho-Corasick algorithm
-  // the primary objective of the function is to initialise the trie with the list of words and create it's corresponding failure and dictionary links
-    trie obj; // using object of trie class to call functions from the trie class 
+{             // this function is used to create the automaton for the Aho-Corasick algorithm
+              // the primary objective of the function is to initialise the trie with the list of words and create it's corresponding failure and dictionary links
+    trie obj; // using object of trie class to call functions from the trie class
 
     obj.trieCreation(root, listOfWords); // calling function to create trie
-    obj.failAndDictLinks(root); // calling function to create failure and dictionary links
+    obj.failAndDictLinks(root);          // calling function to create failure and dictionary links
 }
 
 void findWords(trie *root, string &text, vector<vector<int>> &indexOfWords)
-{ // function to look for words in the sequence of characters 
-    trie obj; // object of class
+{                        // function to look for words in the sequence of characters
+    trie obj;            // object of class
     trie *parent = root; // parent node pointing to root to traverse through trie
 
     for (int i = 0; i < text.length(); i++)
     { // starts from first character of sequence and goes on till the end of the sequence until all characters are covered
         char c = text[i];
-        if (parent->child.count(c)) // looks for the child of the parent node with character c 
+        if (parent->child.count(c)) // looks for the child of the parent node with character c
         {
             parent = parent->child[c]; // parent goes to the child node which contains character c in that branch
 
             if (parent->endOfWord >= 0) // if that node marks the end of a pattern, the index of the word is pushed into the final vector
-                indexOfWords[parent->endOfWord].push_back(i); 
+                indexOfWords[parent->endOfWord].push_back(i);
             // after checking it for end of a word, we follow the dictionary links to see if it matches any other pattern within the sequence of characters
-            trie *temp = parent->dictionaryLinks;  
+            trie *temp = parent->dictionaryLinks;
             while (temp)
-            { 
+            {
                 indexOfWords[temp->endOfWord].push_back(i); // if it marks the end of the word, it gets pushed into the vector
-                temp = temp->dictionaryLinks; // moving to the next dictionary link 
+                temp = temp->dictionaryLinks;               // moving to the next dictionary link
             }
         }
 
         else
-        { // if prefix does not exist, we follow the failure links to find other prefixes to match the pattern 
+        { // if prefix does not exist, we follow the failure links to find other prefixes to match the pattern
             while (parent != root && parent->child.count(c) == 0)
                 parent = parent->failureLinks;
 
             if (parent->child.count(c))
-                i--; 
+                i--;
         }
     }
 }
@@ -91,7 +91,7 @@ bool getFileContent(string fileName, vector<string> &vecOfStrs)
 
     string str;
     while (getline(in, str))
-    { // it checks characters line by line and pushes it into the vector
+    {                       // it checks characters line by line and pushes it into the vector
         if (str.size() > 2) //it pushes characters of only length > 2 to avoid spam of random words
             vecOfStrs.push_back(str);
     }
@@ -102,11 +102,11 @@ bool getFileContent(string fileName, vector<string> &vecOfStrs)
 
 int main()
 {
-    string text; // variable to store input sequence of characters
+    string text;                // variable to store input sequence of characters
     vector<string> listOfWords; // vector to store set of words for creating a trie
 
     bool result = getFileContent("wordlist.txt", listOfWords); // initializing the words into a trie
-    int k = 143029; // number of words in the list
+    int k = 143029;                                            // number of words in the list
 
     trie obj;
     trie *root = obj.newNode(); // creating a new node for root
@@ -137,15 +137,15 @@ int main()
     while (ch != 2)
     { // starting command execution
         switch (ch)
-        { 
+        {
         case 0:
-        { // case for finding substrings within the input sequence of characters
+        {                                                       // case for finding substrings within the input sequence of characters
             vector<vector<int>> indexOfWords(k, vector<int>()); // creating vector of a vector to store final set of output words
             cout << "\nEnter sequence of characters to look for words:" << endl;
             cin >> text;
             //converting text to lower case
             transform(check.begin(), check.end(), check.begin(), ::tolower);
-            
+
             //finding words from the sequence of characters
             findWords(root, text, indexOfWords);
 
@@ -169,11 +169,11 @@ int main()
         break;
 
         case 1:
-        { // case for finding characters that start with input sequence of characters
+        {                      // case for finding characters that start with input sequence of characters
             vector<int> start; // vector to store set of characters
 
             cout << "\nEnter set of characters to look for words:" << endl;
-            cin >> text; 
+            cin >> text;
             // converting it into lower case
             transform(check.begin(), check.end(), check.begin(), ::tolower);
 
@@ -226,7 +226,7 @@ int main()
             ch = 2;
     }
 
-    // Code is good 
+    // Code is good
     cout << "\nThank you!" << endl;
     return 0;
 }
