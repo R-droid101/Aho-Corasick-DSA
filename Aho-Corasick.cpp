@@ -4,9 +4,11 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <chrono>
 #include "trie.cpp" // contains trie class
 
 using namespace std;
+using namespace std::chrono;
 
 void recStartsWith(vector<int> &indexOfWords, trie *parent)
 { // recursive function to look for children nodes of nodes corresponding to input sequence of characters push them into the vector
@@ -111,7 +113,11 @@ int main()
     trie obj;
     trie *root = obj.newNode(); // creating a new node for root
 
+    auto start = high_resolution_clock::now();
     createAutomaton(root, listOfWords); //creating the automaton
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<seconds>(stop - start);
+    cout << "Time taken to create automaton: " << duration.count() << "s.\n" << endl;
 
     // functions for the CLI interface
     cout << "Command list:" << endl;
@@ -139,13 +145,15 @@ int main()
         switch (ch)
         {
         case 0:
-        {                                                       // case for finding substrings within the input sequence of characters
+        {
+            // case for finding substrings within the input sequence of characters
             vector<vector<int>> indexOfWords(k, vector<int>()); // creating vector of a vector to store final set of output words
             cout << "\nEnter sequence of characters to look for words:" << endl;
             cin >> text;
             //converting text to lower case
             transform(check.begin(), check.end(), check.begin(), ::tolower);
 
+            auto start = high_resolution_clock::now(); // start time to find the words
             //finding words from the sequence of characters
             findWords(root, text, indexOfWords);
 
@@ -165,11 +173,16 @@ int main()
                 cout << "Sorry! No words could be found with the sequence of characters input by you." << endl;
 
             cout << endl;
+
+            auto stop = high_resolution_clock::now(); // stop time to find words
+            auto duration = duration_cast<milliseconds>(stop - start); // calculating duration
+            cout << "Time taken to find words: " << duration.count() << "ms.\n" << endl; // printing time taken
         }
         break;
 
         case 1:
-        {                      // case for finding characters that start with input sequence of characters
+        {
+            // case for finding characters that start with input sequence of characters
             vector<int> start; // vector to store set of characters
 
             cout << "\nEnter set of characters to look for words:" << endl;
@@ -177,9 +190,10 @@ int main()
             // converting it into lower case
             transform(check.begin(), check.end(), check.begin(), ::tolower);
 
+            auto star = high_resolution_clock::now(); // start time taken to execute
             // calling function to start
             startsWith(root, text, start);
-            cout << "Set of words that start with:" << text << endl;
+            cout << "\nSet of words that start with:" << text << endl;
             yes = false;
 
             for (int i = 0; i < start.size(); i++)
@@ -192,6 +206,9 @@ int main()
                 cout << "Sorry! No words could be found with the set of characters input by you." << endl;
 
             cout << endl;
+            auto stop = high_resolution_clock::now(); // stop time
+            auto duration = duration_cast<milliseconds>(stop - star); // calculating duration taken
+            cout << "Time taken to find words: " << duration.count() << "ms.\n" << endl; // printing out the time
         }
         break;
 
