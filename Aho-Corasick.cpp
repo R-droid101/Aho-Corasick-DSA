@@ -130,6 +130,7 @@ int main()
     cin >> check;
     int ch = -1;
     transform(check.begin(), check.end(), check.begin(), ::tolower);
+    
     //to convert commands into integers for using in switch case
     if (check.compare("~substring") == 0)
         ch = 0;
@@ -151,7 +152,7 @@ int main()
             cout << "\nEnter sequence of characters to look for words:" << endl;
             cin >> text;
             //converting text to lower case
-            transform(check.begin(), check.end(), check.begin(), ::tolower);
+            transform(text.begin(), text.end(), text.begin(), ::tolower);
 
             auto start = high_resolution_clock::now(); // start time to find the words
             //finding words from the sequence of characters
@@ -188,7 +189,7 @@ int main()
             cout << "\nEnter set of characters to look for words:" << endl;
             cin >> text;
             // converting it into lower case
-            transform(check.begin(), check.end(), check.begin(), ::tolower);
+            transform(text.begin(), text.end(), text.begin(), ::tolower);
 
             auto star = high_resolution_clock::now(); // start time taken to execute
             // calling function to start
