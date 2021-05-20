@@ -21,7 +21,7 @@ void recStartsWith(vector<int> &indexOfWords, trie *parent)
     }
 }
 
-void startsWith(trie *root, string &text, vector<int> &indexOfWords)
+bool startsWith(trie *root, string &text, vector<int> &indexOfWords)
 { // function that enables ~startwith feature
     trie obj;
     trie *parent = root;
@@ -31,12 +31,14 @@ void startsWith(trie *root, string &text, vector<int> &indexOfWords)
         c = text[i];                   // stores the ith character in input string
         if (parent->child.count(c))    // checks if the child of parent node exists
             parent = parent->child[c]; // if child node exists, the child node is made the parent node
-
+        else
+            return false;
     }                                              // finish processing the input sequence of characters
     if (parent->endOfWord >= 0)                    // now it checks if the given sequence of characters is a word itself
         indexOfWords.push_back(parent->endOfWord); // if yes it pushes into the vector
 
     recStartsWith(indexOfWords, parent); // calls recursive function to find more words that start with the given sequence of characters
+    return true;
 }
 
 void createAutomaton(trie *root, vector<string> &listOfWords)
@@ -180,20 +182,20 @@ void CLI(trie *root, vector<string> &listOfWords)
             // converting it into lower case
             transform(text.begin(), text.end(), text.begin(), ::tolower);
 
+            if (!(startsWith(root, text, start)))
+            { // now words found
+                cout << "Sorry! No words could be found with the set of characters input by you." << endl;
+                break;
+            }
             auto star = high_resolution_clock::now(); // start time taken to execute
             // calling function to start
-            startsWith(root, text, start);
+
             cout << "\nSet of words that start with:" << text << endl;
-            yes = false;
 
             for (int i = 0; i < start.size(); i++)
             { // printing list of words
-                yes = true;
                 cout << listOfWords[start[i]] << endl;
             }
-
-            if (!yes) // now words found
-                cout << "Sorry! No words could be found with the set of characters input by you." << endl;
 
             cout << endl;
             auto stop = high_resolution_clock::now();                 // stop time
