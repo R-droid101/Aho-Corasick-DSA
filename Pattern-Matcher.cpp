@@ -10,17 +10,6 @@
 using namespace std;
 using namespace std::chrono;
 
-void recStartsWith(vector<int> &indexOfWords, trie *parent)
-{ // recursive function to look for children nodes of nodes corresponding to input sequence of characters push them into the vector
-    for (auto &it : parent->child)
-    {                                                     // iterates through all the children of a corresponding parent node to find all possible words
-        if (it.second->endOfWord >= 0)                    // checks if a particular node marks the end of the word
-            indexOfWords.push_back(it.second->endOfWord); // if the node marks the end of the push it into the vector
-
-        recStartsWith(indexOfWords, it.second); // calling the function on the current child node to look for their child nodes
-    }
-}
-
 void startsWith(trie *root, string &text, vector<int> &indexOfWords)
 { // function that enables ~startwith feature
     trie obj;
@@ -37,6 +26,17 @@ void startsWith(trie *root, string &text, vector<int> &indexOfWords)
         indexOfWords.push_back(parent->endOfWord); // if yes it pushes into the vector
 
     recStartsWith(indexOfWords, parent); // calls recursive function to find more words that start with the given sequence of characters
+}
+
+void recStartsWith(vector<int> &indexOfWords, trie *parent)
+{ // recursive function to look for children nodes of nodes corresponding to input sequence of characters push them into the vector
+    for (auto &it : parent->child)
+    {                                                     // iterates through all the children of a corresponding parent node to find all possible words
+        if (it.second->endOfWord >= 0)                    // checks if a particular node marks the end of the word
+            indexOfWords.push_back(it.second->endOfWord); // if the node marks the end of the push it into the vector
+
+        recStartsWith(indexOfWords, it.second); // calling the function on the current child node to look for their child nodes
+    }
 }
 
 void createAutomaton(trie *root, vector<string> &listOfWords)
@@ -102,35 +102,23 @@ bool getFileContent(string fileName, vector<string> &vecOfStrs)
     return true;
 }
 
-int main()
+void CLI(trie *root, vector<string> &listOfWords)
 {
-    string text;                // variable to store input sequence of characters
-    vector<string> listOfWords; // vector to store set of words for creating a trie
-
-    bool result = getFileContent("wordlist.txt", listOfWords); // initializing the words into a trie
-    int k = 143029;                                            // number of words in the list
-
-    trie obj;
-    trie *root = obj.newNode(); // creating a new node for root
-
-    auto start = high_resolution_clock::now();
-    createAutomaton(root, listOfWords); //creating the automaton
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<seconds>(stop - start);
-    cout << "Time taken to create automaton: " << duration.count() << "s.\n" << endl;
-
     // functions for the CLI interface
     cout << "Command list:" << endl;
     cout << "To find possible words within the given sequence of characters. - ~substring" << endl;
     cout << "To find possible words which starts with the given set of characters. - ~startwith" << endl;
     cout << "End - ~end" << endl;
 
+    int k = 143029; // number of words in the list
+    string text;    // variable to store input sequence of characters
+
     string check;
     cout << "What would you like to do?" << endl;
     cin >> check;
     int ch = -1;
     transform(check.begin(), check.end(), check.begin(), ::tolower);
-    
+
     //to convert commands into integers for using in switch case
     if (check.compare("~substring") == 0)
         ch = 0;
@@ -175,9 +163,10 @@ int main()
 
             cout << endl;
 
-            auto stop = high_resolution_clock::now(); // stop time to find words
+            auto stop = high_resolution_clock::now();                  // stop time to find words
             auto duration = duration_cast<milliseconds>(stop - start); // calculating duration
-            cout << "Time taken to find words: " << duration.count() << "ms.\n" << endl; // printing time taken
+            cout << "Time taken to find words: " << duration.count() << "ms.\n"
+                 << endl; // printing time taken
         }
         break;
 
@@ -207,9 +196,10 @@ int main()
                 cout << "Sorry! No words could be found with the set of characters input by you." << endl;
 
             cout << endl;
-            auto stop = high_resolution_clock::now(); // stop time
+            auto stop = high_resolution_clock::now();                 // stop time
             auto duration = duration_cast<milliseconds>(stop - star); // calculating duration taken
-            cout << "Time taken to find words: " << duration.count() << "ms.\n" << endl; // printing out the time
+            cout << "Time taken to find words: " << duration.count() << "ms.\n"
+                 << endl; // printing out the time
         }
         break;
 
@@ -243,6 +233,25 @@ int main()
         else if (check.compare("~end") == 0)
             ch = 2;
     }
+}
+
+int main()
+{
+    vector<string> listOfWords; // vector to store set of words for creating a trie
+
+    bool result = getFileContent("wordlist.txt", listOfWords); // initializing the words into a trie
+
+    trie obj;
+    trie *root = obj.newNode(); // creating a new node for root
+
+    auto start = high_resolution_clock::now();
+    createAutomaton(root, listOfWords); //creating the automaton
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<seconds>(stop - start);
+    cout << "Time taken to create automaton: " << duration.count() << "s.\n"
+         << endl;
+
+    CLI(root, listOfWords); // calling the list of commands that is to be executed
 
     // Code is good
     cout << "\nThank you!" << endl;
