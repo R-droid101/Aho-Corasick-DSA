@@ -10,6 +10,17 @@
 using namespace std;
 using namespace std::chrono;
 
+void recStartsWith(vector<int> &indexOfWords, trie *parent)
+{ // recursive function to look for children nodes of nodes corresponding to input sequence of characters push them into the vector
+    for (auto &it : parent->child)
+    {                                                     // iterates through all the children of a corresponding parent node to find all possible words
+        if (it.second->endOfWord >= 0)                    // checks if a particular node marks the end of the word
+            indexOfWords.push_back(it.second->endOfWord); // if the node marks the end of the push it into the vector
+
+        recStartsWith(indexOfWords, it.second); // calling the function on the current child node to look for their child nodes
+    }
+}
+
 void startsWith(trie *root, string &text, vector<int> &indexOfWords)
 { // function that enables ~startwith feature
     trie obj;
@@ -26,17 +37,6 @@ void startsWith(trie *root, string &text, vector<int> &indexOfWords)
         indexOfWords.push_back(parent->endOfWord); // if yes it pushes into the vector
 
     recStartsWith(indexOfWords, parent); // calls recursive function to find more words that start with the given sequence of characters
-}
-
-void recStartsWith(vector<int> &indexOfWords, trie *parent)
-{ // recursive function to look for children nodes of nodes corresponding to input sequence of characters push them into the vector
-    for (auto &it : parent->child)
-    {                                                     // iterates through all the children of a corresponding parent node to find all possible words
-        if (it.second->endOfWord >= 0)                    // checks if a particular node marks the end of the word
-            indexOfWords.push_back(it.second->endOfWord); // if the node marks the end of the push it into the vector
-
-        recStartsWith(indexOfWords, it.second); // calling the function on the current child node to look for their child nodes
-    }
 }
 
 void createAutomaton(trie *root, vector<string> &listOfWords)
